@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Online Shop</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .product {
+      border: 1px solid #ddd;
+      padding: 15px;
+      border-radius: 5px;
+      text-align: center;
+    }
+    .product h3 {
+      margin-top: 0;
+    }
+    .product p {
+      font-weight: bold;
+      color: #e74c3c;
+    }
+    button {
+      background: #27ae60;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #219a52;
+    }
+    .cart {
+      border-top: 1px solid #ddd;
+      padding-top: 20px;
+    }
+    .cart h2 {
+      color: #333;
+    }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .total {
+      font-size: 18px;
+      font-weight: bold;
+      text-align: right;
+      margin-top: 20px;
+    }
+    .order-btn {
+      background: #3498db;
+      display: block;
+      width: 100%;
+      margin-top: 20px;
+    }
+    .order-btn:hover {
+      background: #2980b9;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>My Online Shop</h1>
+    
+    <div class="products" id="products">
+      <!-- Products will be loaded here -->
+    </div>
+    
+    <div class="cart">
+      <h2>Shopping Cart</h2>
+      <div id="cart-items">
+        <!-- Cart items will be displayed here -->
+      </div>
+      <div class="total" id="total">Total: 0 RWF</div>
+      <button class="order-btn" onclick="placeOrder()">Place Order</button>
+    </div>
+  </div>
+
+  <script>
+    const products = [
+      { id: 1, name: "Basmati Rice 5kg", price: 8000 },
+      { id: 2, name: "Cooking Oil 1L", price: 2500 },
+      { id: 3, name: "Local Coffee Bean", price: 5000 }
+    ];
+
+    let cart = [];
+
+    function displayProducts() {
+      const productsContainer = document.getElementById('products');
+      products.forEach(product => {
+        const productDiv = document.createElement('div');
+        productDiv.className = 'product';
+        productDiv.innerHTML = `
+          <h3>${product.name}</h3>
+          <p>${product.price} RWF</p>
+          <button onclick="addToCart(${product.id})">Add to Cart</button>
+        `;
+        productsContainer.appendChild(productDiv);
+      });
+    }
+
+    function addToCart(productId) {
+      const product = products.find(p => p.id === productId);
+      cart.push(product);
+      updateCart();
+    }
+
+    function updateCart() {
+      const cartItems = document.getElementById('cart-items');
+      cartItems.innerHTML = '';
+      
+      cart.forEach((item, index) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'cart-item';
+        itemDiv.innerHTML = `
+          <span>${item.name}</span>
+          <span>${item.price} RWF</span>
+          <button onclick="removeFromCart(${index})">Remove</button>
+        `;
+        cartItems.appendChild(itemDiv);
+      });
+      
+      const total = cart.reduce((sum, item) => sum + item.price, 0);
+      document.getElementById('total').textContent = `Total: ${total} RWF`;
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      updateCart();
+    }
+
+    function placeOrder() {
+      if (cart.length === 0) {
+        alert('Your cart is empty!');
+        return;
+      }
+      
+      const total = cart.reduce((sum, item) => sum + item.price, 0);
+      const message = `Order Summary:\n${cart.map(item => `${item.name} - ${item.price} RWF`).join('\n')}\n\nTotal: ${total} RWF\n\nThank you for your order!`;
+      alert(message);
+      
+      // In a real app, this would send the order to WhatsApp or a server
+      // For now, just clear the cart
+      cart = [];
+      updateCart();
+    }
+
+    // Initialize the page
+    displayProducts();
+  </script>
+</body>
+</html>
