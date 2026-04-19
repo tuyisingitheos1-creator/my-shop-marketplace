@@ -258,6 +258,9 @@ function PrivatePage({ user }) {
 }
 
 function MarketplaceRoute({ products, cart, user, isGuest, isAdmin, myRequests, handleLogout, addToCart, removeFromCart, updateQuantity, clearCart, subtotal, totalItems, sendWhatsApp, requestProductName, setRequestProductName, requestNote, setRequestNote, requestStatus, requestLoading, handleRequestProduct }) {
+  const respondedRequests = myRequests.filter((request) => request.admin_response);
+  const notificationCount = respondedRequests.length;
+
   return (
     <div style={{ 
       padding: '20px', 
@@ -289,6 +292,11 @@ function MarketplaceRoute({ products, cart, user, isGuest, isAdmin, myRequests, 
           <Link to="/private" style={{ color: '#3498db', textDecoration: 'none', fontWeight: 'bold' }}>Private Page</Link>
           {isAdmin && (
             <Link to="/admin" style={{ color: '#10b981', textDecoration: 'none', fontWeight: 'bold' }}>Admin Dashboard</Link>
+          )}
+          {notificationCount > 0 && (
+            <span style={{ padding: '10px 14px', backgroundColor: '#fef3c7', color: '#92400e', borderRadius: '999px', fontWeight: '700' }}>
+              🔔 {notificationCount} new response{notificationCount > 1 ? 's' : ''}
+            </span>
           )}
           <span style={{ color: '#2c3e50', fontWeight: '600' }}>
             Signed in as {isGuest ? 'Guest User' : user?.email || 'Customer'}
@@ -504,6 +512,13 @@ function MarketplaceRoute({ products, cart, user, isGuest, isAdmin, myRequests, 
         <p style={{ margin: '0 0 18px', color: '#65748b' }}>
           Can’t find an item? Send us the product name and we’ll try to add it for you.
         </p>
+
+        {notificationCount > 0 && (
+          <div style={{ marginBottom: '20px', padding: '16px', backgroundColor: '#ecfdf5', borderRadius: '16px', border: '1px solid #d1fae5' }}>
+            <p style={{ margin: '0', color: '#065f46', fontWeight: '700' }}>You have {notificationCount} admin response{notificationCount > 1 ? 's' : ''}.</p>
+            <p style={{ margin: '8px 0 0', color: '#14532d' }}>Check your request history below to view responses from the admin.</p>
+          </div>
+        )}
 
         <form onSubmit={handleRequestProduct} style={{ display: 'grid', gap: '14px' }}>
           <input

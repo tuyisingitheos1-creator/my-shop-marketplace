@@ -2,7 +2,7 @@
   "name": "my-shop",
   "version": "1.0.0",
   "description": "My online shop React app",
-  "homepage": "https://tuyisingitheos1-creator.github.io/my-shop-marketplace",
+  "homepage": ".",
   "main": "index.js",
   "scripts": {
     "start": "react-scripts start",
