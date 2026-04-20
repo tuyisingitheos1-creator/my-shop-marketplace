@@ -291,13 +291,14 @@ function MarketplaceRoute({ products, cart, user, isGuest, isAdmin, myRequests, 
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
           <Link to="/private" style={{ color: '#3498db', textDecoration: 'none', fontWeight: 'bold' }}>Private Page</Link>
           {isAdmin && (
-            <Link to="/admin" style={{ color: '#10b981', textDecoration: 'none', fontWeight: 'bold' }}>Admin Dashboard</Link>
+            <Link to="/admin" style={{ color: '#10b981', textDecoration: 'none', fontWeight: 'bold', backgroundColor: '#d1fae5', padding: '10px 12px', borderRadius: '12px' }}>Admin Dashboard</Link>
           )}
-          {notificationCount > 0 && (
-            <span style={{ padding: '10px 14px', backgroundColor: '#fef3c7', color: '#92400e', borderRadius: '999px', fontWeight: '700' }}>
-              🔔 {notificationCount} new response{notificationCount > 1 ? 's' : ''}
-            </span>
-          )}
+          <span style={{ padding: '10px 14px', backgroundColor: '#fef3c7', color: '#92400e', borderRadius: '999px', fontWeight: '700' }}>
+            {notificationCount > 0 ? `🔔 ${notificationCount} new response${notificationCount > 1 ? 's' : ''}` : '🔔 No new responses'}
+          </span>
+          <span style={{ padding: '10px 14px', backgroundColor: isAdmin ? '#ecfdf5' : '#eef2ff', color: isAdmin ? '#065f46' : '#1d4ed8', borderRadius: '999px', fontWeight: '700' }}>
+            {user?.email ? (isAdmin ? 'Admin user' : 'Standard user') : 'Not signed in'}
+          </span>
           <span style={{ color: '#2c3e50', fontWeight: '600' }}>
             Signed in as {isGuest ? 'Guest User' : user?.email || 'Customer'}
           </span>
@@ -609,6 +610,8 @@ export default function MarketplaceApp() {
   const [adminResponseDrafts, setAdminResponseDrafts] = useState({});
   const [adminLoading, setAdminLoading] = useState(false);
 
+  const isAdmin = user?.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase();
+
   const sampleProducts = [
     {
       id: 1,
@@ -720,10 +723,10 @@ export default function MarketplaceApp() {
   }, [user, isGuest]);
 
   useEffect(() => {
-    if (user?.email === ADMIN_EMAIL) {
+    if (isAdmin) {
       fetchAdminRequests();
     }
-  }, [user]);
+  }, [isAdmin]);
 
   const handleLogin = async (e, navigate) => {
     e.preventDefault();
@@ -1046,7 +1049,7 @@ export default function MarketplaceApp() {
                 cart={cart}
                 user={user}
                 isGuest={isGuest}
-                isAdmin={user?.email === ADMIN_EMAIL}
+                isAdmin={isAdmin}
                 handleLogout={handleLogout}
                 addToCart={addToCart}
                 removeFromCart={removeFromCart}
@@ -1168,7 +1171,7 @@ function AdminPage({ adminRequests, adminResponseDrafts, setAdminResponseDrafts,
 
 function AdminRoute({ user, children }) {
   if (!user) return <Navigate to="/login" replace />;
-  if (user.email !== ADMIN_EMAIL) return <Navigate to="/marketplace" replace />;
+  if (user?.email?.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) return <Navigate to="/marketplace" replace />;
   return children;
 }
 
