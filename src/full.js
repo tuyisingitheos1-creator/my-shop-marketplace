@@ -396,63 +396,87 @@ function MarketplaceRoute({ products, cart, user, isGuest, isAdmin, myRequests, 
 
       <div style={{ display: 'flex', gap: '40px' }}>
         <div style={{ flex: 2 }}>
-          {['Food', 'Clothing', 'Shoes'].map(category => {
-            const categoryProducts = products.filter(p => p.category === category);
-            if (categoryProducts.length === 0) return null;
-            
-            return (
-              <div key={category} style={{ marginBottom: '40px' }}>
-                <h2 style={{ color: '#34495e', marginBottom: '20px', borderBottom: '2px solid #3498db', paddingBottom: '10px' }}>
-                  {category === 'Food' ? '🍽️' : category === 'Clothing' ? '👕' : '👟'} {category} Products
-                </h2>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '20px' }}>
-                  {categoryProducts.map((product) => (
-                    <div key={product.id} style={{ 
-                      border: '1px solid #ddd', 
-                      padding: '15px', 
-                      borderRadius: '10px',
-                      boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-                      transition: 'transform 0.2s, box-shadow 0.2s',
-                      cursor: 'pointer',
-                      backgroundColor: 'white'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-5px)';
-                      e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = '0 2px 5px rgba(0,0,0,0.1)';
-                    }}
-                    >
-                      <img src={product.image_url} alt={product.name} style={{ width: '100%', borderRadius: '8px', height: '150px', objectFit: 'cover' }} />
-                      <h3 style={{ margin: '10px 0', fontSize: '18px', color: '#333' }}>{product.name}</h3>
-                      <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#2c3e50', margin: '10px 0' }}>{product.price.toLocaleString()} RWF</p>
-                      <button 
-                        onClick={() => addToCart(product)} 
-                        style={{ 
-                          width: '100%', 
-                          padding: '12px', 
-                          cursor: 'pointer',
-                          backgroundColor: '#3498db',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '6px',
-                          fontSize: '16px',
-                          fontWeight: 'bold',
-                          transition: 'background-color 0.2s'
-                        }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#2980b9'}
-                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#3498db'}
-                      >
-                        🛒 Add to Cart
-                      </button>
-                    </div>
-                  ))}
+          <h2 style={{ color: '#34495e', marginBottom: '20px', borderBottom: '2px solid #3498db', paddingBottom: '10px' }}>
+            🛒 Available Products
+          </h2>
+          
+          {/* Category Filter */}
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' }}>
+            {['All', 'Food', 'Clothing', 'Shoes'].map((category) => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                style={{
+                  padding: '8px 16px',
+                  border: 'none',
+                  borderRadius: '20px',
+                  cursor: 'pointer',
+                  backgroundColor: selectedCategory === category ? '#3498db' : '#ecf0f1',
+                  color: selectedCategory === category ? 'white' : '#34495e',
+                  fontWeight: 'bold',
+                  transition: 'all 0.2s'
+                }}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+          
+          <div id="product-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '20px' }}>
+            {products
+              .filter(product => selectedCategory === 'All' || product.category === selectedCategory)
+              .map((product) => (
+              <div key={product.id} style={{ 
+                border: '1px solid #ddd', 
+                padding: '15px', 
+                borderRadius: '10px',
+                boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+                transition: 'transform 0.2s, box-shadow 0.2s',
+                cursor: 'pointer',
+                backgroundColor: 'white'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-5px)';
+                e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 2px 5px rgba(0,0,0,0.1)';
+              }}
+              >
+                <img src={product.image_url} alt={product.name} style={{ width: '100%', borderRadius: '8px', height: '150px', objectFit: 'cover' }} />
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '12px', color: '#7f8c8d', backgroundColor: '#ecf0f1', padding: '4px 8px', borderRadius: '12px', fontWeight: 'bold' }}>
+                    {product.category}
+                  </span>
+                  <span style={{ fontSize: '12px', color: '#34495e', backgroundColor: '#bdc3c7', padding: '4px 8px', borderRadius: '12px', fontWeight: 'bold' }}>
+                    {product.code}
+                  </span>
                 </div>
+                <h3 style={{ margin: '10px 0', fontSize: '18px', color: '#333' }}>{product.name}</h3>
+                <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#2c3e50', margin: '10px 0' }}>{product.price.toLocaleString()} RWF</p>
+                <button 
+                  onClick={() => addToCart(product)} 
+                  style={{ 
+                    width: '100%', 
+                    padding: '12px', 
+                    cursor: 'pointer',
+                    backgroundColor: '#3498db',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    transition: 'background-color 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#2980b9'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#3498db'}
+                >
+                  🛒 Add to Cart
+                </button>
               </div>
-            );
-          })}
+            ))}
+          </div>
         </div>
 
         <div style={{ flex: 1, border: '1px solid #eee', padding: '20px', height: 'fit-content', backgroundColor: '#f9f9f9', borderRadius: '10px' }}>
@@ -616,8 +640,7 @@ export default function MarketplaceApp() {
   const [requestLoading, setRequestLoading] = useState(false);
   const [myRequests, setMyRequests] = useState([]);
   const [adminRequests, setAdminRequests] = useState([]);
-  const [adminResponseDrafts, setAdminResponseDrafts] = useState({});
-  const [adminLoading, setAdminLoading] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
   const isAdmin = user?.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase();
 
@@ -625,6 +648,7 @@ export default function MarketplaceApp() {
     // Food Products
     {
       id: 1,
+      code: 'FOOD-001',
       name: 'Premium Basmati Rice 5kg',
       price: 8500,
       category: 'Food',
@@ -632,6 +656,7 @@ export default function MarketplaceApp() {
     },
     {
       id: 2,
+      code: 'FOOD-002',
       name: 'Organic Cooking Oil 1L',
       price: 3200,
       category: 'Food',
@@ -639,6 +664,7 @@ export default function MarketplaceApp() {
     },
     {
       id: 3,
+      code: 'FOOD-003',
       name: 'Fresh Local Coffee Beans 500g',
       price: 5500,
       category: 'Food',
@@ -646,6 +672,7 @@ export default function MarketplaceApp() {
     },
     {
       id: 4,
+      code: 'FOOD-004',
       name: 'Pure Honey 500g',
       price: 4200,
       category: 'Food',
@@ -653,6 +680,7 @@ export default function MarketplaceApp() {
     },
     {
       id: 5,
+      code: 'FOOD-005',
       name: 'Fresh Bananas 1kg',
       price: 1200,
       category: 'Food',
@@ -660,6 +688,7 @@ export default function MarketplaceApp() {
     },
     {
       id: 6,
+      code: 'FOOD-006',
       name: 'Tomato Paste 800g',
       price: 1800,
       category: 'Food',
@@ -667,6 +696,7 @@ export default function MarketplaceApp() {
     },
     {
       id: 7,
+      code: 'FOOD-007',
       name: 'Fresh Milk 1L',
       price: 1500,
       category: 'Food',
@@ -674,80 +704,155 @@ export default function MarketplaceApp() {
     },
     {
       id: 8,
+      code: 'FOOD-008',
       name: 'Whole Wheat Bread Loaf',
       price: 800,
       category: 'Food',
       image_url: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=300&h=200&fit=crop'
     },
-    // Clothing Products
     {
       id: 9,
-      name: 'Cotton T-Shirt',
-      price: 2500,
+      code: 'FOOD-009',
+      name: 'Fresh Eggs 12-pack',
+      price: 2200,
+      category: 'Food',
+      image_url: 'https://images.unsplash.com/photo-1582722872445-70da27ba0c1f?w=300&h=200&fit=crop'
+    },
+    {
+      id: 10,
+      code: 'FOOD-010',
+      name: 'Organic Apples 1kg',
+      price: 2800,
+      category: 'Food',
+      image_url: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=300&h=200&fit=crop'
+    },
+    // Clothing Products
+    {
+      id: 11,
+      code: 'CLOTH-001',
+      name: 'Cotton T-Shirt (White)',
+      price: 4500,
       category: 'Clothing',
       image_url: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300&h=200&fit=crop'
     },
     {
-      id: 10,
-      name: 'Denim Jeans',
-      price: 8500,
+      id: 12,
+      code: 'CLOTH-002',
+      name: 'Denim Jeans (Blue)',
+      price: 12500,
       category: 'Clothing',
       image_url: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=300&h=200&fit=crop'
     },
     {
-      id: 11,
-      name: 'Winter Jacket',
-      price: 15000,
+      id: 13,
+      code: 'CLOTH-003',
+      name: 'Wool Sweater (Gray)',
+      price: 18500,
       category: 'Clothing',
-      image_url: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=300&h=200&fit=crop'
+      image_url: 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=300&h=200&fit=crop'
     },
     {
-      id: 12,
-      name: 'Summer Dress',
-      price: 6500,
+      id: 14,
+      code: 'CLOTH-004',
+      name: 'Cotton Dress (Floral)',
+      price: 9500,
       category: 'Clothing',
       image_url: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=300&h=200&fit=crop'
     },
     {
-      id: 13,
-      name: 'Casual Hoodie',
-      price: 5500,
-      category: 'Clothing',
-      image_url: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=300&h=200&fit=crop'
-    },
-    // Shoes Products
-    {
-      id: 14,
-      name: 'Running Sneakers',
-      price: 12000,
-      category: 'Shoes',
-      image_url: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=300&h=200&fit=crop'
-    },
-    {
       id: 15,
-      name: 'Leather Boots',
-      price: 18000,
-      category: 'Shoes',
-      image_url: 'https://images.unsplash.com/photo-1544966503-7cc5ac882d5d?w=300&h=200&fit=crop'
+      code: 'CLOTH-005',
+      name: 'Leather Jacket (Black)',
+      price: 28500,
+      category: 'Clothing',
+      image_url: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=300&h=200&fit=crop'
     },
     {
       id: 16,
-      name: 'Casual Sandals',
-      price: 3500,
-      category: 'Shoes',
-      image_url: 'https://images.unsplash.com/photo-1560269020-043728e97327?w=300&h=200&fit=crop'
+      code: 'CLOTH-006',
+      name: 'Running Shorts (Black)',
+      price: 3200,
+      category: 'Clothing',
+      image_url: 'https://images.unsplash.com/photo-1506629905607-0b5b8b5a6e5e?w=300&h=200&fit=crop'
     },
     {
       id: 17,
-      name: 'Formal Shoes',
-      price: 9500,
+      code: 'CLOTH-007',
+      name: 'Winter Coat (Navy)',
+      price: 32500,
+      category: 'Clothing',
+      image_url: 'https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=300&h=200&fit=crop'
+    },
+    {
+      id: 18,
+      code: 'CLOTH-008',
+      name: 'Silk Scarf (Red)',
+      price: 6800,
+      category: 'Clothing',
+      image_url: 'https://images.unsplash.com/photo-1601762603332-db5e4b90cca7?w=300&h=200&fit=crop'
+    },
+    // Shoes Products
+    {
+      id: 19,
+      code: 'SHOES-001',
+      name: 'Running Sneakers (White)',
+      price: 18500,
       category: 'Shoes',
       image_url: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=300&h=200&fit=crop'
     },
     {
-      id: 18,
-      name: 'Sports Shoes',
-      price: 11000,
+      id: 20,
+      code: 'SHOES-002',
+      name: 'Leather Boots (Brown)',
+      price: 28500,
+      category: 'Shoes',
+      image_url: 'https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?w=300&h=200&fit=crop'
+    },
+    {
+      id: 21,
+      code: 'SHOES-003',
+      name: 'Casual Loafers (Black)',
+      price: 15200,
+      category: 'Shoes',
+      image_url: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=300&h=200&fit=crop'
+    },
+    {
+      id: 22,
+      code: 'SHOES-004',
+      name: 'High Heels (Red)',
+      price: 22500,
+      category: 'Shoes',
+      image_url: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=300&h=200&fit=crop'
+    },
+    {
+      id: 23,
+      code: 'SHOES-005',
+      name: 'Sandals (Beige)',
+      price: 8500,
+      category: 'Shoes',
+      image_url: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=300&h=200&fit=crop'
+    },
+    {
+      id: 24,
+      code: 'SHOES-006',
+      name: 'Basketball Shoes (Blue)',
+      price: 24500,
+      category: 'Shoes',
+      image_url: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=300&h=200&fit=crop'
+    },
+    {
+      id: 25,
+      code: 'SHOES-007',
+      name: 'Winter Boots (Gray)',
+      price: 32000,
+      category: 'Shoes',
+      image_url: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=300&h=200&fit=crop'
+    },
+    {
+      id: 26,
+      code: 'SHOES-008',
+      name: 'Flip Flops (Multi-color)',
+      price: 2500,
       category: 'Shoes',
       image_url: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=300&h=200&fit=crop'
     }
